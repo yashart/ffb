@@ -139,14 +139,22 @@ public class UserInterface extends JFrame implements WindowListener, IDialogClos
 		switch (layoutSettings.getLayout()) {
 			case PORTRAIT:
 				panelContent = portraitContent();
+                fFieldComponent.disableViewport();
 				break;
 			case SQUARE:
-				panelContent = squareContent();
+                panelContent = squareContent();
+                fFieldComponent.enableViewport(16, 16);
                 //fFieldComponent.enableViewport(8, 8);
 				break;
+            case WIDE:
+                panelContent = landscapeContent();
+                fFieldComponent.disableViewport();
+                //fFieldComponent.enableViewport(16, 16);
+                break;
 			default:
 				panelContent = landscapeContent();
-                fFieldComponent.enableViewport(16, 10);
+                fFieldComponent.disableViewport();
+                //fFieldComponent.enableViewport(27, 16);
 				break;
 		}
 
@@ -218,7 +226,8 @@ public class UserInterface extends JFrame implements WindowListener, IDialogClos
 	private JPanel squareContent() {
 		JPanel fieldPanel = fieldPanel();
 
-		JPanel logChatScorePanel = wrapperPanel(BoxLayout.Y_AXIS, getLog(), getScoreBar(), getChat());
+
+        JPanel logChatScorePanel = wrapperPanel(BoxLayout.Y_AXIS, getLog(), getScoreBar(), getChat());
 		logChatScorePanel.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
 
 		JPanel panelMain = wrapperPanel(BoxLayout.X_AXIS, createSideBarPanel(fSideBarHome), fieldPanel, createSideBarPanel(fSideBarAway));
