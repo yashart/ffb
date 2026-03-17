@@ -143,7 +143,7 @@ public class UserInterface extends JFrame implements WindowListener, IDialogClos
 				break;
 			case SQUARE:
                 panelContent = squareContent();
-                fFieldComponent.enableViewport(16, 16);
+                fFieldComponent.enableViewport(16, 16, 1.66);
                 //fFieldComponent.enableViewport(8, 8);
 				break;
             case WIDE:

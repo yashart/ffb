@@ -7,7 +7,7 @@ public class LayoutSettings {
 	public static final double BASE_SCALE_FACTOR = 1.0;
 	public static final int SIDEBAR_WIDTH_L = 145;
 	public static final int SIDEBAR_WIDTH_P = 165;
-	public static final int BASE_SQUARE_SIZE = 50;
+	public static int BASE_SQUARE_SIZE = 30;
 	public static final int TITLE_BAR_HEIGHT = 29;
 
 	private final double scaleStep = 0.05;
@@ -43,5 +43,6 @@ public class LayoutSettings {
 	public double smallerScale() {
 		return Math.max(MIN_SCALE_FACTOR, scale - scaleStep);
 	}
+
 
 }

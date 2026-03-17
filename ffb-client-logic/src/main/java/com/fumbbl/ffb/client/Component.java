@@ -10,7 +10,6 @@ import static com.fumbbl.ffb.client.LayoutSettings.SIDEBAR_WIDTH_L;
 import static com.fumbbl.ffb.client.LayoutSettings.SIDEBAR_WIDTH_P;
 
 public enum Component {
-
 	FIELD_SQUARE(new Dimension(BASE_SQUARE_SIZE, BASE_SQUARE_SIZE)),
 	FIELD(fieldDimension(ClientLayout.LANDSCAPE), fieldDimension(ClientLayout.PORTRAIT), fieldDimension(ClientLayout.WIDE)),
 	CHAT(new Dimension(389, 226), new Dimension(389, 153), new Dimension(260, 343), new Dimension(741, 139)),

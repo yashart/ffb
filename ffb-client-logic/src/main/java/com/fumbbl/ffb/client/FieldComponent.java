@@ -91,6 +91,7 @@ public class FieldComponent extends JPanel implements IModelChangeObserver, Mous
     private Point panDragStart;
     private int panStartVpX, panStartVpY;
 
+    private double scaleFactor = 1.0;
     // Minimap
     private boolean minimapEnabled = false;
     private static final double MINIMAP_SCALE = 0.1;  // 20% of component width
@@ -139,11 +140,17 @@ public class FieldComponent extends JPanel implements IModelChangeObserver, Mous
      * @param visibleX number of squares visible horizontally
      * @param visibleY number of squares visible vertically
      */
-    public void enableViewport(int visibleX, int visibleY) {
+    public void enableViewport(int visibleX, int visibleY, double scale) {
         this.visibleSquaresX = visibleX;
         this.visibleSquaresY = visibleY;
+        this.scaleFactor = Math.max(0.25, Math.min(scale, 4.0)); // clamp
         this.viewportEnabled = true;
         recalculateViewport();
+    }
+
+    // Backward-compatible overload
+    public void enableViewport(int visibleX, int visibleY) {
+        enableViewport(visibleX, visibleY, 1.0);
     }
 
     /**
@@ -225,7 +232,10 @@ public class FieldComponent extends JPanel implements IModelChangeObserver, Mous
     private void updateComponentSize() {
         Dimension size;
         if (viewportEnabled) {
-            size = new Dimension(viewportWidth, viewportHeight);
+            size = new Dimension(
+                    (int) (viewportWidth * scaleFactor),
+                    (int) (viewportHeight * scaleFactor)
+            );
         } else {
             size = uiDimensionProvider.dimension(Component.FIELD);
         }
@@ -246,8 +256,8 @@ public class FieldComponent extends JPanel implements IModelChangeObserver, Mous
         return new MouseEvent(
                 e.getComponent(),
                 e.getID(), e.getWhen(), e.getModifiersEx(),
-                e.getX() + viewportX,       // translated X
-                e.getY() + viewportY,       // translated Y
+                (int) (e.getX() / scaleFactor) + viewportX,   // unscale, then offset
+                (int) (e.getY() / scaleFactor) + viewportY,
                 e.getXOnScreen(), e.getYOnScreen(),
                 e.getClickCount(), e.isPopupTrigger(), e.getButton()
         );
@@ -375,14 +385,15 @@ public class FieldComponent extends JPanel implements IModelChangeObserver, Mous
 
         // VIEWPORT-AWARE REPAINT
         if (viewportEnabled && pUpdatedArea != null) {
-            // Translate fImage coords → component coords
             Rectangle compRect = new Rectangle(
-                    pUpdatedArea.x - viewportX,
-                    pUpdatedArea.y - viewportY,
-                    pUpdatedArea.width,
-                    pUpdatedArea.height
+                    (int) ((pUpdatedArea.x - viewportX) * scaleFactor),
+                    (int) ((pUpdatedArea.y - viewportY) * scaleFactor),
+                    (int) (pUpdatedArea.width * scaleFactor) + 2,   // +2 avoids rounding gaps
+                    (int) (pUpdatedArea.height * scaleFactor) + 2
             );
-            Rectangle compBounds = new Rectangle(0, 0, viewportWidth, viewportHeight);
+            int compW = (int) (viewportWidth * scaleFactor);
+            int compH = (int) (viewportHeight * scaleFactor);
+            Rectangle compBounds = new Rectangle(0, 0, compW, compH);
             if (compRect.intersects(compBounds)) {
                 repaint(compRect.intersection(compBounds));
             }
@@ -569,16 +580,17 @@ public class FieldComponent extends JPanel implements IModelChangeObserver, Mous
 
     protected void paintComponent(Graphics pGraphics) {
         if (viewportEnabled) {
-            // Draw only the viewport portion of fImage, mapped 1:1 to the component
+            int destW = (int) (viewportWidth * scaleFactor);
+            int destH = (int) (viewportHeight * scaleFactor);
+
             pGraphics.drawImage(fImage,
-                    // destination (component coords)
-                    0, 0, viewportWidth, viewportHeight,
-                    // source (fImage coords)
+                    // destination (component coords, scaled up)
+                    0, 0, destW, destH,
+                    // source (fImage coords, original size)
                     viewportX, viewportY,
                     viewportX + viewportWidth, viewportY + viewportHeight,
                     null);
 
-            // Draw minimap overlay
             if (minimapEnabled) {
                 drawMinimap((Graphics2D) pGraphics);
             }
@@ -653,11 +665,11 @@ public class FieldComponent extends JPanel implements IModelChangeObserver, Mous
 
         // Handle viewport panning (middle mouse button drag)
         if (viewportEnabled && panDragStart != null) {
-            int dx = panDragStart.x - pMouseEvent.getX();
-            int dy = panDragStart.y - pMouseEvent.getY();
+            int dx = (int) ((panDragStart.x - pMouseEvent.getX()) / scaleFactor);
+            int dy = (int) ((panDragStart.y - pMouseEvent.getY()) / scaleFactor);
             setViewportPosition(panStartVpX + dx, panStartVpY + dy);
             repaint();
-            return; // consume — don't forward pan drags to game logic
+            return;
         }
 
         MouseEvent translated = translateMouseEvent(pMouseEvent);

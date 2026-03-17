@@ -39,7 +39,7 @@ public class PitchDimensionProvider extends DimensionProvider {
 		int offset = addImageOffset ? unscaledFieldSquare() / 2 : 0;
 
 		if (isPitchPortrait()) {
-			return scale(new Dimension(y * unscaledFieldSquare() + offset, (25 - x) * unscaledFieldSquare() + offset));
+			return scale(new Dimension(y * unscaledFieldSquare()  + offset, (25 - x) * unscaledFieldSquare() + offset));
 		}
 		return scale(new Dimension(x * unscaledFieldSquare() + offset, y * unscaledFieldSquare() + offset));
 	}
