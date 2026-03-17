@@ -2,7 +2,7 @@ package com.fumbbl.ffb.client;
 
 public enum ClientLayout {
 	LANDSCAPE(false), PORTRAIT(true), SQUARE(true),
-	WIDE(true, (double) 57 / 30 * 1.6, 1.25);
+	WIDE(false, (double) 57 / 30, 1.25);
 
 	private final boolean portrait;
 	private final double pitchScale;
