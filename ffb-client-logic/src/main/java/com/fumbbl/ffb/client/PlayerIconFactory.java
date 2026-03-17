@@ -212,7 +212,7 @@ public class PlayerIconFactory {
                 } else {
                     x = (pMoving ? 3 : 2) * iconSize;
                 }
-                int scaledIconSize = dimensionProvider.scale(iconSize);
+                int scaledIconSize = dimensionProvider.scale(LayoutSettings.BASE_SQUARE_SIZE);
                 icon = new BufferedImage(scaledIconSize, scaledIconSize, BufferedImage.TYPE_INT_ARGB);
                 Graphics2D g2d = icon.createGraphics();
                 if (swapColors) {
