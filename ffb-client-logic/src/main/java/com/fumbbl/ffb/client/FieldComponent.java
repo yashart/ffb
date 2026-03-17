@@ -92,7 +92,7 @@ public class FieldComponent extends JPanel implements IModelChangeObserver, Mous
     private int panStartVpX, panStartVpY;
 
     // Minimap
-    private boolean minimapEnabled = false;
+    private boolean minimapEnabled = true;
     private static final double MINIMAP_SCALE = 0.1;  // 20% of component width
     private static final int MINIMAP_MARGIN = 4;
     // ======================================================
